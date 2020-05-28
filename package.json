@@ -1,0 +1,17 @@
+{
+  "name": "simple-csv-server",
+  "version": "1.0.0",
+  "description": "A simple server for storing posted csv data to a sqlite3 db.",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "sql-injection":"^0.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Scott Bateman",
+  "license": "MIT"
+}
