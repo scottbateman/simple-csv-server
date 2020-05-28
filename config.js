@@ -23,13 +23,55 @@
 */
 
 const HTTP_PORT = 9666;             //server port
-const DB_NAME = "default_db.db";    //database name... this database file will be created unless already exists
-
+const DB_NAME = "scary_game.db";    //database name... this database file will be created unless already exists
 
 //Define tables here
+const tables = [
+    {
+        table_name: 'ClickLog',
+        columns: [
+            'pid TEXT',
+            'SysTime TEXT',
+            'GameTime REAL',
+            'ClickedObject REAL'
+        ]
+    },
+    {
+        table_name: 'ConsentLog',
+        columns: [
+            'pid TEXT',
+            'SysTime TEXT',
+            'GameTime REAL',
+            'ConsentStatus TEXT'
+        ]
+    },
+    {
+        table_name: 'FPSLog',
+        columns: [
+            'pid TEXT',
+            'SysTime TEXT',
+            'GameTime REAL',
+            'CurrentFPS REAL',
+            'AvgFPS REAL',
+            'MinFPS REAL',
+            'MaxFPS REAL'
+        ]
+    },
+    {
+        table_name: 'InfoLog',
+        columns: [
+            'pid TEXT',
+            'SysTime TEXT',
+            'OS TEXT', 
+            'GPU TEXT',
+            'GPUMem TEXT', 
+            'CPU Text',
+            'ProcessorCount INT',
+            'SysMem INT'
+        ]
+    }
 
-
-const tables = [];      //add tables to this array
+];      //add tables to this array
 
 //exports... do not touch
 module.exports.HTTP_PORT = HTTP_PORT;
