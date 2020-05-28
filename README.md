@@ -7,6 +7,15 @@ A simple server that just accepts text/plain posted data in a comma seprated for
 ## Configuring
 Simply edit config.js providing the appropriate data table details.
 
+## Install and Run
+ - Clone this repo
+ - To install dependencies
+ ``` npm install ```
+
+ - To run the server
+ ``` npm start ```
+
+
 ## Testing
 Use this curl command to test
 ```
