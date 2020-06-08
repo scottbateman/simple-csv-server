@@ -62,6 +62,7 @@ var http_server = app.listen(config.HTTP_PORT, () => {
 for (let i = 0; i < config.tables.length; i++){
     table = config.tables[i];
     (function(table){
+        //data posts
         app.post('/' + table.table_name, function(req, res){
             let insert = `insert into ${table.table_name} values \(${req.body}\);`        
             db.exec(insert, (err, row)=>{
@@ -77,8 +78,65 @@ for (let i = 0; i < config.tables.length; i++){
                     res.sendStatus(200);
                 }
             });
-        })
-    })(table);
+        });
+
+        //get data
+        app.get('/' + table.table_name, function(req, res){
+	    let csv_results = [];
+        let select = `select * from ${table.table_name};`        
+        var columns = [];
+	    var output = "";
+
+        db.all(select, (err, rows)=>{
+            let hasRows = false;
+            if (err)
+            {   
+                let error_msg = `error on query:
+                    ${select}
+                `;
+                console.error(error_msg);
+                console.error(err);
+                res.setHeader('Content-type', 'text/plain');
+                res.setHeader('Pragma','no-cache');
+                res.setHeader('Expires','0');
+                res.status(500).send(error_msg);
+            }
+            else{
+                for (r in rows)
+                {
+                    let row = rows[r]; 
+                    if (columns.length == 0)
+                    {
+                        columns = Object.getOwnPropertyNames(row);
+                    }
+                    let b = [];
+                    for (col in columns)
+                    {
+                        b.push(row[columns[col]]);
+                    }
+                    output += b.join(',') + '\n';
+                }
+                output = columns.join(',') + '\n' + output;
+                res.setHeader('Content-type', 'text/plain');
+                res.setHeader('Pragma','no-cache');
+                res.setHeader('Expires','0');
+                res.status(200);
+                res.send(output);
+                hasRows = true;
+            }
+            if (!hasRows)
+            {
+                let error_msg = `query returns no rows:
+                    ${select}
+                `;
+                res.setHeader('Content-type', 'text/plain');
+                res.setHeader('Pragma','no-cache');
+                res.setHeader('Expires','0');
+                res.status(500).send(error_msg);
+                console.log(error_msg);
+            }
+        });
+    });})(table);
 }
 
 //default response for any other request
