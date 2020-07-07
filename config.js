@@ -22,14 +22,23 @@
  Add each table definition to the tables array below.
 */
 
-const HTTP_PORT = 9666;             //server port
+const HTTP_PORT = 9669;             //server port
 const DB_NAME = "default_db.db";    //database name... this database file will be created unless already exists
 const USE_JSON = false;      //set to true to use JSON instead of csv
 
 //Define tables here
 
+const table1 = {
+ table_name = 'table1',
+ columns = [
+    'a INT',
+    'b TEXT',
+    'c INT',
+    'd REAL' 
+ ]
+};
 
-const tables = [];      //add tables to this array
+const tables = [table1];      //add tables to this array
 
 //exports... do not touch
 module.exports.HTTP_PORT = HTTP_PORT;
