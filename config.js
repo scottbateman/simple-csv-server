@@ -24,7 +24,7 @@
 
 const HTTP_PORT = 9666;             //server port
 const DB_NAME = "default_db.db";    //database name... this database file will be created unless already exists
-
+const USE_JSON = false;      //set to true to use JSON instead of csv
 
 //Define tables here
 

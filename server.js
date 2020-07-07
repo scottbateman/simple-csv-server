@@ -2,12 +2,12 @@ var express = require("express");
 var app = express();
 var bodyparser = require('body-parser');
 var fs = require('fs');
+const { Parser } = require('json2csv');
 
 app.use(bodyparser.text())
 
 const config = require('./config');
 const sqlite = require('sqlite3').verbose();
-
 
 let table_create = false;
 
@@ -25,7 +25,6 @@ try{
     console.log(`${config.DB_NAME} NOT found. Will create it and try to create tables.`);
     table_create = true;
 }
-
 
 //connect or create db
 var db = new sqlite.Database(config.DB_NAME, (err) => {
@@ -64,7 +63,22 @@ for (let i = 0; i < config.tables.length; i++){
     (function(table){
         //data posts
         app.post('/' + table.table_name, function(req, res){
-            let insert = `insert into ${table.table_name} values \(${req.body}\);`        
+            let columns = table.columns.map(c => c.split(" ")[0]);
+            let values = "";
+            if (USE_JSON)
+            {
+                const opts = { columns };
+                try {
+                      values = parse(myData, opts);
+                } catch (err) {
+                      console.error(err);
+                }
+            }
+            else
+            {
+                values = req.body;
+            }    
+            let insert = `insert into ${table.table_name} (${columns}) values \(${values}\);`        
             db.exec(insert, (err, row)=>{
                 if (err){   
                     let error_msg = `error on query:
