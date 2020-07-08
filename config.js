@@ -24,18 +24,17 @@
 
 const HTTP_PORT = 9669;             //server port
 const DB_NAME = "default_db.db";    //database name... this database file will be created unless already exists
-const USE_JSON = false;      //set to true to use JSON instead of csv
+const USE_JSON = true;      //set to true to use JSON instead of csv
 
 //Define tables here
-
 const table1 = {
- table_name = 'table1',
- columns = [
-    'a INT',
-    'b TEXT',
-    'c INT',
-    'd REAL' 
- ]
+    table_name: 'table1',
+    columns : [
+        'a INT',
+        'b TEXT',
+        'c INT',
+        'd REAL' 
+    ]
 };
 
 const tables = [table1];      //add tables to this array
@@ -43,4 +42,5 @@ const tables = [table1];      //add tables to this array
 //exports... do not touch
 module.exports.HTTP_PORT = HTTP_PORT;
 module.exports.DB_NAME = DB_NAME;
+module.exports.USE_JSON = USE_JSON;
 module.exports.tables = tables;

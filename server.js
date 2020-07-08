@@ -2,12 +2,15 @@ var express = require("express");
 var app = express();
 var bodyparser = require('body-parser');
 var fs = require('fs');
+
 const { Parser } = require('json2csv');
 
-app.use(bodyparser.text())
+
 
 const config = require('./config');
 const sqlite = require('sqlite3').verbose();
+
+app.use(bodyparser.text())
 
 let table_create = false;
 
@@ -63,22 +66,24 @@ for (let i = 0; i < config.tables.length; i++){
     (function(table){
         //data posts
         app.post('/' + table.table_name, function(req, res){
-            let columns = table.columns.map(c => c.split(" ")[0]);
+            let fields = table.columns.map(c => c.split(" ")[0]);
             let values = "";
-            if (USE_JSON)
+
+            if (config.USE_JSON)
             {
-                const opts = { columns };
-                try {
-                      values = parse(myData, opts);
-                } catch (err) {
-                      console.error(err);
-                }
+                const opts = { fields };
+                opts.header = false;
+                const parser = new Parser(opts);
+
+                let obj = JSON.parse(req.body);
+                values = parser.parse(obj);
+                //console.log(values);
             }
             else
             {
                 values = req.body;
             }    
-            let insert = `insert into ${table.table_name} (${columns}) values \(${values}\);`        
+            let insert = `insert into ${table.table_name} (${fields}) values \(${values}\);`        
             db.exec(insert, (err, row)=>{
                 if (err){   
                     let error_msg = `error on query:
@@ -97,7 +102,23 @@ for (let i = 0; i < config.tables.length; i++){
         //get data
         app.get('/' + table.table_name, function(req, res){
 	    let csv_results = [];
-        let select = `select * from ${table.table_name};`        
+        let select = `select * from ${table.table_name}`        
+        let query = "";
+
+        let keys = Object.keys(req.query);
+
+        for (let i = 0; i < keys.length; i++)
+        {
+            if (i == 0)
+                query += " where"
+
+            query += " "+keys[i] +" = '" + req.query[keys[i]]+"'";
+
+            if (i < keys.length - 1 && keys.length > 1)
+                query += " and";
+        }
+        select += query + ";";
+        //console.log(select);
         var columns = [];
 	    var output = "";
 
@@ -116,21 +137,28 @@ for (let i = 0; i < config.tables.length; i++){
                 res.status(500).send(error_msg);
             }
             else{
-                for (r in rows)
+                if (config.USE_JSON)
                 {
-                    let row = rows[r]; 
-                    if (columns.length == 0)
-                    {
-                        columns = Object.getOwnPropertyNames(row);
-                    }
-                    let b = [];
-                    for (col in columns)
-                    {
-                        b.push(row[columns[col]]);
-                    }
-                    output += b.join(',') + '\n';
+                    output = JSON.stringify(rows);
                 }
-                output = columns.join(',') + '\n' + output;
+                else
+                {
+                    for (r in rows)
+                    {
+                        let row = rows[r]; 
+                        if (columns.length == 0)
+                        {
+                            columns = Object.getOwnPropertyNames(row);
+                        }
+                        let b = [];
+                        for (col in columns)
+                        {
+                            b.push(row[columns[col]]);
+                        }
+                        output += b.join(',') + '\n';
+                    }
+                    output = columns.join(',') + '\n' + output;
+                }
                 res.setHeader('Content-type', 'text/plain');
                 res.setHeader('Pragma','no-cache');
                 res.setHeader('Expires','0');
