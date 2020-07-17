@@ -69,6 +69,24 @@ const tables = [
             'ProcessorCount INT',
             'SysMem INT'
         ]
+    },
+    {
+        table_name: 'BrightnessLog',
+        columns: [
+            'pid TEXT',
+	    'SysTime TEXT',
+            'GameTime REAL',
+            'Brightness REAL'	
+	]
+    },
+    {
+        table_name: 'VolumeLog',
+        columns: [
+            'pid TEXT',
+	    'SysTime TEXT',
+            'GameTime REAL',
+            'Volume REAL'	
+	]
     }
 
 ];      //add tables to this array

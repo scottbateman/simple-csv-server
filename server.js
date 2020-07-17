@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var bodyparser = require('body-parser');
 var fs = require('fs');
+const querystring = require('querystring');
 
 app.use(bodyparser.text())
 
@@ -64,7 +65,8 @@ for (let i = 0; i < config.tables.length; i++){
     (function(table){
         //data posts
         app.post('/' + table.table_name, function(req, res){
-            let insert = `insert into ${table.table_name} values \(${req.body}\);`        
+            let body = querystring.unescape(req.body);
+            let insert = `insert into ${table.table_name} values \(${body}\);`        
             db.exec(insert, (err, row)=>{
                 if (err){   
                     let error_msg = `error on query:
